@@ -62,75 +62,14 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
         }
         return true;
     }
-
+    
     /**
      * Verify a board is obeying "sudoku rules" (no duplicates of
      * 1-9 in a column, row, or 3x3 box).
      * @return false if a rule is broken, true otherwise.
      */
     public boolean validBoard() {
-        // Copy this array each time a row / column / box is checked.
-        // Each index represents a digit from 1 to 9 respectively.
-        // For example, if a row contains the digit 3, the value at
-        // index 2 is set to true. If the method attempts to set a
-        // value to true and it's already true (duplicate found),
-        // it returns false.
-        boolean[] contents = { false, false, false, false, false, false, false, false, false };
-
-        // Check rows for duplicates
-        for (int row = 0; row <= 8; row++) {
-            boolean[] rowContents = contents.clone();
-            for (int col = 0; col <= 8; col++) {
-                // Ignore "blank" squares
-                if (this.grid[row][col].getValue() == 0) {
-                    continue;
-                }
-                // Digit is not 0-9 = invalid
-                if (this.grid[row][col].getValue() < 0 || this.grid[row][col].getValue() > 9) {
-                    return false;
-                }
-                // Digit is a duplicate = invalid
-                if (rowContents[this.grid[row][col].getValue() - 1]) {
-                    return false;
-                }
-                rowContents[this.grid[row][col].getValue() - 1] = true;
-            }
-        }
-
-        // Check columns for duplicates
-        for (int col = 0; col <= 8; col++) {
-            boolean[] colContents = contents.clone();
-            for (int row = 0; row <= 8; row++) {
-                if (this.grid[row][col].getValue() == 0) {
-                    continue;
-                }
-                if (colContents[this.grid[row][col].getValue() - 1]) {
-                    return false;
-                }
-                colContents[this.grid[row][col].getValue() - 1] = true;
-            }
-        }
-
-        // Check individual 3x3 boxes for duplicates
-        for (int topRow = 0; topRow <= 6; topRow+=3) {
-            for (int leftCol = 0; leftCol <= 6; leftCol+=3) {
-
-                boolean[] boxContents = contents.clone();
-                for (int row = topRow; row <= topRow + 2; row++) {
-                    for (int col = leftCol; col <= leftCol + 2; col++) {
-                        if (this.grid[row][col].getValue() == 0) {
-                            continue;
-                        }
-                        if (boxContents[this.grid[row][col].getValue() - 1]) {
-                            return false;
-                        }
-                        boxContents[this.grid[row][col].getValue() - 1] = true;
-                    }
-                }
-            }
-        }
-
-        return true;
+        return validInput() && validRows() && validColumns() && validBoxes();
     }
 
     /**
@@ -164,6 +103,89 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
     }
 
     /**
+     * Verify each value in the board is a single-digit integer.
+     * @return true if only single-digit integers, false otherwise.
+     */
+    private boolean validInput() {
+        for (int row = 0; row <= 8; row++) {
+            for (int col = 0; col <= 8; col++) {
+                if (this.grid[row][col].getValue() < 0 || this.grid[row][col].getValue() > 9) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Verify each row contains no duplicate values.
+     * @return true if each value is unique, false otherwise.
+     */
+    private boolean validRows() {
+        for (int row = 0; row <= 8; row++) {
+            boolean[] contents = {false, false, false, false, false, false, false, false, false};
+            for (int col = 0; col <= 8; col++) {
+                // Ignore "blank" squares
+                if (this.grid[row][col].getValue() == 0) {
+                    continue;
+                }
+                // Digit is a duplicate = invalid
+                if (contents[this.grid[row][col].getValue() - 1]) {
+                    return false;
+                }
+                contents[this.grid[row][col].getValue() - 1] = true;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Verify each column contains no duplicate values.
+     * @return true if each value is unique, false otherwise.
+     */
+    private boolean validColumns() {
+        for (int col = 0; col <= 8; col++) {
+            boolean[] contents = {false, false, false, false, false, false, false, false, false};
+            for (int row = 0; row <= 8; row++) {
+                if (this.grid[row][col].getValue() == 0) {
+                    continue;
+                }
+                if (contents[this.grid[row][col].getValue() - 1]) {
+                    return false;
+                }
+                contents[this.grid[row][col].getValue() - 1] = true;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Verify each 3 x 3 box contains no duplicate values.
+     * @return true if each value is unique, false otherwise.
+     */
+    private boolean validBoxes() {
+        for (int topRow = 0; topRow <= 6; topRow+=3) {
+            for (int leftCol = 0; leftCol <= 6; leftCol+=3) {
+
+                boolean[] contents = {false, false, false, false, false, false, false, false, false};
+                for (int row = topRow; row <= topRow + 2; row++) {
+                    for (int col = leftCol; col <= leftCol + 2; col++) {
+
+                        if (this.grid[row][col].getValue() == 0) {
+                            continue;
+                        }
+                        if (contents[this.grid[row][col].getValue() - 1]) {
+                            return false;
+                        }
+                        contents[this.grid[row][col].getValue() - 1] = true;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Updates possible solutions for each square.
      * If a square is already solved, return true.
      * If a square has no possible solutions, return false (invalid).
@@ -182,7 +204,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
             int value = square.getPossible().get(0);
             square.setValue(value);
             this.filled++;
-            return updateNeighborsOf(square);
+            return updateNeighbors(square);
         } else {
             if (this.priority.compareTo(square) > 0) {
                 this.priority = square;
@@ -199,8 +221,8 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
      *               neighbors are being checked.
      * @return false if a square becomes impossible, true otherwise.
      */
-    private boolean updateNeighborsOf(Square square) {
-        return checkRow(square) && checkCol(square) && checkBox(square);
+    private boolean updateNeighbors(Square square) {
+        return updateRow(square) && updateCol(square) && updateBox(square);
     }
 
     /**
@@ -209,7 +231,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
      * @param square The square whose value was changed.
      * @return false if any square becomes unsolvable, else true.
      */
-    private boolean checkRow(Square square) {
+    private boolean updateRow(Square square) {
         for (int col = 0; col <= 8; col++) {
             Square neighbor = this.grid[square.getRow()][col];
             if (neighbor.getValue() == 0) {
@@ -228,7 +250,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
      * @param square The square whose value was changed.
      * @return false if any square becomes unsolvable, else true.
      */
-    private boolean checkCol(Square square) {
+    private boolean updateCol(Square square) {
         for (int row = 0; row <= 8; row++) {
             Square neighbor = this.grid[row][square.getCol()];
             if (neighbor.getValue() == 0) {
@@ -247,7 +269,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
      * @param square The square whose value was changed.
      * @return false if any square becomes unsolvable, else true.
      */
-    private boolean checkBox(Square square) {
+    private boolean updateBox(Square square) {
         int boxTopRow = (square.getRow() / 3) * 3;
         int boxLeftCol = (square.getCol() / 3) * 3;
         for (int row = boxTopRow; row <= boxTopRow + 2; row++) {
