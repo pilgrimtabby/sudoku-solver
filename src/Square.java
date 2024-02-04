@@ -14,6 +14,22 @@ public class Square implements Comparable<Square> {
     private final int col;
 
     /**
+     * Default square constructor. Used to create an intentionally
+     * bad default for this.priority (it will always be replaced
+     * when running SudokuBoard.update).
+     */
+    public Square() {
+        this.value = 0;
+        // Create possible solutions list with 10 entries.
+        this.possible = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            this.possible.add(i);
+        }
+        this.row = 0;
+        this.col = 0;
+    }
+
+    /**
      * Construct a square from its value and location on a new board.
      * @param grid The grid being used to construct a new board.
      * @param row 0 to 8
@@ -40,23 +56,7 @@ public class Square implements Comparable<Square> {
         this.row = square.row;
         this.col = square.col;
     }
-
-    /**
-     * Default square constructor. Used to create an intentionally
-     * bad default for this.priority (it will always be replaced
-     * when running SudokuBoard.update).
-     */
-    public Square() {
-        this.value = 0;
-        // Create possible solutions list with 10 entries.
-        this.possible = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            this.possible.add(i);
-        }
-        this.row = 0;
-        this.col = 0;
-    }
-
+    
     /**
      * Setter method for this.value.
      * @param i The square's value.
