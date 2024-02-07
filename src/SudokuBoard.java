@@ -99,7 +99,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
 
         for (Square[] row : this.grid) {
             for (Square square : row) {
-                if (square.getPossible() != null && square.compareTo(priority) < 0) {
+                if (square.getValue() == 0 && square.compareTo(priority) < 0) {
                     priority = square;
                     if (priority.getPossible().size() == 2) {
                         return priority;
