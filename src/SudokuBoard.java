@@ -2,7 +2,7 @@
  * Hold the contents of a sudoku board.
  *
  * @author pilgrim_tabby
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class SudokuBoard implements Comparable<SudokuBoard> {
     private final Square[][] grid = new Square[9][9];
