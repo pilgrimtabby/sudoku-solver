@@ -103,6 +103,8 @@ public class Square implements Comparable<Square> {
      * @param grid The grid of values used to create a new board.
      */
     private void setPossible(int[][] grid) {
+        if (this.value != 0) { return; }
+
         this.possible = new ArrayList<>();
         ArrayList<Integer> existing = new ArrayList<>(8);
         existing.addAll(getRowValues(grid));
