@@ -25,36 +25,37 @@ public class SudokuGame {
             board = boardStack.pop();
             newBoards++;
             Square nextSquare = board.updateGrid();
-            // Solution found
-            if (board.getFilled() == 81) {
-                if (!board.validBoard()) {
-                    System.out.println("Solution found, but it's invalid");
+
+            if (nextSquare == null) {
+                // Solution found
+                if (board.getFilled() == 81) {
+                    if (!board.validBoard()) {
+                        System.out.println("Solution found, but it's invalid");
+                        System.out.printf("Boards generated: %d\n", inserts);
+                        System.out.printf("Boards tested: %d\n", newBoards);
+                        System.out.println(board);
+                        return;
+                    }
+                    long totalTime = System.currentTimeMillis() - startTime;
+                    System.out.println("SOLUTION FOUND!");
                     System.out.printf("Boards generated: %d\n", inserts);
                     System.out.printf("Boards tested: %d\n", newBoards);
+                    System.out.printf("Time elapsed: %d ms\n", totalTime);
                     System.out.println(board);
                     return;
                 }
-                long totalTime = System.currentTimeMillis() - startTime;
-                System.out.println("SOLUTION FOUND!");
-                System.out.printf("Boards generated: %d\n", inserts);
-                System.out.printf("Boards tested: %d\n", newBoards);
-                System.out.printf("Squares iterated over: %d\n", board.getSquaresChecked());
-                System.out.printf("Time elapsed: %d ms\n", totalTime);
-                System.out.println(board);
-                return;
+                continue;
             }
 
             // Move to next board if current board is impossible
-            if (nextSquare != null) {
-                // Using a square with minimal possible solutions, make
-                // new boards, one for each possible solution, and add
-                // them to the stack.
-                ArrayList<Integer> possible = new ArrayList<>(nextSquare.getPossible());
-                for (int i : possible) {
-                    nextSquare.overwritePossible(i);
-                    boardStack.push(new SudokuBoard(board));
-                    inserts++;
-                }
+            // Using a square with minimal possible solutions, make
+            // new boards, one for each possible solution, and add
+            // them to the stack.
+            ArrayList<Integer> possible = new ArrayList<>(nextSquare.getPossible());
+            for (int i : possible) {
+                nextSquare.overwritePossible(i);
+                boardStack.push(new SudokuBoard(board));
+                inserts++;
             }
         }
         // Board is impossible
