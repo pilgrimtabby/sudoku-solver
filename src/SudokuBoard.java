@@ -8,7 +8,6 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
     private final Square[][] grid = new Square[9][9];
     /** Number of squares with non-zero (solved) value */
     private int filled;
-    private int squaresChecked;
     /** Squares with 1 possible solution */
     private final Stack<Square> solvedSquares = new Stack<>();
 
@@ -21,7 +20,7 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
         for (int row = 0; row <= 8; row++) {
             for (int col = 0; col <= 8; col++) {
                 this.grid[row][col] = new Square(grid, row, col);
-                if (this.grid[row][col].getPossible().size() == 1) {
+                if (this.grid[row][col].getValue() == 0 && this.grid[row][col].getPossible().size() == 1) {
                     this.solvedSquares.push(this.grid[row][col]);
                 }
             }
@@ -29,7 +28,6 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
 
         // Set this.filled to count of current solved squares
         setFilled();
-        this.squaresChecked = 0;
     }
 
     /**
@@ -41,14 +39,13 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
         for (Square[] row : board.grid) {
             for (Square square : row) {
                 this.grid[square.getRow()][square.getCol()] = new Square(square);
-                if (this.grid[square.getRow()][square.getCol()].getPossible() != null && this.grid[square.getRow()][square.getCol()].getPossible().size() == 1) {
+                if (this.grid[square.getRow()][square.getCol()].getValue() == 0 && this.grid[square.getRow()][square.getCol()].getPossible().size() == 1) {
                     this.solvedSquares.push(this.grid[square.getRow()][square.getCol()]);
                 }
             }
         }
 
         this.filled = board.filled;
-        this.squaresChecked = board.squaresChecked;
     }
 
     /**
@@ -59,13 +56,10 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
     public Square updateGrid() {
         while (!this.solvedSquares.isEmpty()) {
             boolean boardIsPossible = update(this.solvedSquares.pop());
-            this.squaresChecked++;
             if (!boardIsPossible) {
-                System.out.println("impossible board");
                 return null;
             }
         }
-        System.out.println("stack empty");
         return getPriority();
     }
 
@@ -227,16 +221,9 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
      * @return false if a square has no possible solution, else true.
      */
     private boolean update(Square square) {
-        if (square.getValue() != 0) { return true; }
-        if (square.getPossible().isEmpty()) { return false; }
-
-        if (square.getPossible().size() == 1) {
-            int value = square.getPossible().get(0);
-            square.setValue(value);
-            this.filled++;
-            return updateNeighbors(square);
-        }
-        return true;
+        square.setValue(square.getPossible().get(0));
+        this.filled++;
+        return updateNeighbors(square);
     }
 
     /**
@@ -341,13 +328,4 @@ public class SudokuBoard implements Comparable<SudokuBoard> {
         }
         return sb.toString();
     }
-
-    /**
-     * Getter method for this.squaresChecked.
-     * @return total number of squares iterated over in update method.
-     */
-    public int getSquaresChecked() {
-        return this.squaresChecked;
-    }
-
 }
