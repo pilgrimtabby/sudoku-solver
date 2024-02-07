@@ -4,7 +4,7 @@ import java.util.ArrayList;
  * Find the solution to a Sudoku board.
  *
  * @author pilgrim_tabby
- * @version 0.0.1
+ * @version 0.0.2
  */
 public class SudokuGame {
     private static int inserts;
@@ -24,10 +24,7 @@ public class SudokuGame {
         while (!boardStack.isEmpty()) {
             board = boardStack.pop();
             newBoards++;
-            boolean isPossible = board.updateGrid();
-            // Move to next board if current board is impossible
-            if (!isPossible) { continue; }
-
+            Square nextSquare = board.updateGrid();
             // Solution found
             if (board.getFilled() == 81) {
                 if (!board.validBoard()) {
@@ -41,16 +38,17 @@ public class SudokuGame {
                 System.out.println("SOLUTION FOUND!");
                 System.out.printf("Boards generated: %d\n", inserts);
                 System.out.printf("Boards tested: %d\n", newBoards);
+                System.out.printf("Squares iterated over: %d\n", board.getSquaresChecked());
                 System.out.printf("Time elapsed: %d ms\n", totalTime);
                 System.out.println(board);
                 return;
             }
 
-            // Using a square with minimal possible solutions, make
-            // new boards, one for each possible solution, and add
-            // them to the stack.
-            Square nextSquare = board.getPriority();
+            // Move to next board if current board is impossible
             if (nextSquare != null) {
+                // Using a square with minimal possible solutions, make
+                // new boards, one for each possible solution, and add
+                // them to the stack.
                 ArrayList<Integer> possible = new ArrayList<>(nextSquare.getPossible());
                 for (int i : possible) {
                     nextSquare.overwritePossible(i);
@@ -71,7 +69,7 @@ public class SudokuGame {
      */
     private static SudokuBoard getSudokuBoard() {
         // TODO: Add way for user to input a board.
-        int[][] grid = {
+        int[][] grid0 = {
                 { 1, 0, 6, 0, 0, 0, 0, 3, 0, },
                 { 0, 2, 0, 0, 1, 8, 4, 0, 0, },
                 { 0, 0, 0, 7, 0, 0, 0, 0, 0, },
@@ -83,7 +81,7 @@ public class SudokuGame {
                 { 2, 0, 0, 0, 0, 0, 0, 0, 8, },
         };
 
-        int[][] grid0 = {
+        int[][] grid = {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
