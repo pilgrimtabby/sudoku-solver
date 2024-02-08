@@ -8,10 +8,10 @@ import java.util.ArrayList;
  */
 public class Square implements Comparable<Square> {
     private int value;
-    /** List of possible values / solutions. */
-    private ArrayList<Integer> possible;
     private final int row;
     private final int col;
+    /** List of possible values / solutions. */
+    private ArrayList<Integer> possible;
 
     /**
      * Construct a square from its value and location on a new board.
@@ -27,18 +27,18 @@ public class Square implements Comparable<Square> {
     }
 
     /**
-     * Construct a square from another square.
+     * Construct a square from another square, making a deep copy
+     * of the possible solution ArrayList.
      * @param square The old square to copy.
      */
     public Square(Square square) {
         this.value = square.value;
-        // Make deep copy of possible solutions
+        this.row = square.row;
+        this.col = square.col;
         if (this.value == 0) {
             this.possible = new ArrayList<>();
             this.possible.addAll(square.possible);
         }
-        this.row = square.row;
-        this.col = square.col;
     }
 
     /**
@@ -87,7 +87,7 @@ public class Square implements Comparable<Square> {
      * @return the square's row.
      */
     public int getRow() {
-        return row;
+        return this.row;
     }
 
     /**
@@ -95,7 +95,7 @@ public class Square implements Comparable<Square> {
      * @return the square's column.
      */
     public int getCol() {
-        return col;
+        return this.col;
     }
 
     /**
