@@ -31,13 +31,10 @@ public class SudokuGame {
                 if (board.getFilled() == 81) {
                     if (!board.validBoard()) {
                         System.out.println("Solution found, but it's invalid");
-                        System.out.printf("Boards generated: %d\n", inserts);
-                        System.out.printf("Boards tested: %d\n", newBoards);
-                        System.out.println(board);
-                        return;
+                    } else {
+                        System.out.println("SOLUTION FOUND!");
                     }
                     long totalTime = System.currentTimeMillis() - startTime;
-                    System.out.println("SOLUTION FOUND!");
                     System.out.printf("Boards generated: %d\n", inserts);
                     System.out.printf("Boards tested: %d\n", newBoards);
                     System.out.printf("Time elapsed: %d ms\n", totalTime);
@@ -58,6 +55,7 @@ public class SudokuGame {
                 inserts++;
             }
         }
+
         // Board is impossible
         System.out.println("Impossible board");
         System.out.printf("Boards generated: %d\n", inserts);
@@ -70,7 +68,7 @@ public class SudokuGame {
      */
     private static SudokuBoard getSudokuBoard() {
         // TODO: Add way for user to input a board.
-        int[][] grid0 = {
+        int[][] grid = {
                 { 1, 0, 6, 0, 0, 0, 0, 3, 0, },
                 { 0, 2, 0, 0, 1, 8, 4, 0, 0, },
                 { 0, 0, 0, 7, 0, 0, 0, 0, 0, },
@@ -82,7 +80,7 @@ public class SudokuGame {
                 { 2, 0, 0, 0, 0, 0, 0, 0, 8, },
         };
 
-        int[][] grid = {
+        int[][] grid0 = {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, },
